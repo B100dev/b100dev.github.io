@@ -1,87 +1,1067 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Benjamin Moisan</title>
-    <meta name="description" content="Benjamin Moisan | Electrical Engineering @ UMich | Projects, Resume, Contact" />
-    <link rel="icon" href="logo.png" type="image/png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      html {
-        scroll-behavior: smooth;
-      }
-      .theme-transition {
-        transition: background-color 0.5s, color 0.5s;
-      }
-      .project-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-      .project-card:hover {
-        transform: translateY(-6px) scale(1.03);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .animate-fadeIn {
-        animation: fadeIn 0.8s ease-out both;
-      }
-      .glow-text {
-        text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
-      }
-      .scroll-progress {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 4px;
-        background: #3b82f6;
-        z-index: 9999;
-        width: 0%;
-      }
-    </style>
-  </head>
-  <body class="bg-black text-white theme-transition text-[0.8rem] md:text-[0.95rem] lg:text-[1rem]" id="pageBody">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CircuitForge — PCB Circuit Builder</title>
+  <meta name="description" content="Interactive PCB circuit builder. Place components, draw copper traces, and simulate your circuit in real time." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --pcb-green:     #0d2b1a;
+      --pcb-mid:       #0f3820;
+      --copper:        #c87941;
+      --copper-bright: #e8943a;
+      --silk:          #f0e8d0;
+      --led-green:     #33ff66;
+      --led-red:       #ff3333;
+      --accent-teal:   #00ffd5;
+      --header-h:      52px;
+    }
 
-    <section class="max-w-4xl mx-auto px-4 py-4 animate-fadeIn">
-      <div class="flex justify-between items-center">
-        
-      </div>
-    </section>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    <!-- Header Section (Styled like Trushant's) -->
-    <section id="intro" class="max-w-4xl mx-auto px-4 py-16 text-left">
-      <div class="flex flex-col md:flex-row items-center gap-6">
-        <img src="logo.png" alt="Benjamin Moisan" class="w-36 h-36 rounded-xl object-cover border border-gray-700 shadow-lg" />
-        <div>
-          <h1 class="text-4xl font-bold">Benjamin Moisan</h1>
-          <p class="text-xl text-gray-400 mt-1">Electrical Engineering @ University of Michigan</p>
-          <p class="text-md text-gray-400">📍 Ann Arbor, MI and Anchorage, AK </p>
-          <p class="mt-1 text-green-400 text-md">● Building Stuff</p>
-          <div class="flex flex-wrap gap-4 mt-4 text-sm">
-            <a href="mailto:moisanb@umich.edu" class="flex items-center gap-1 text-blue-400 underline"><span>📧</span>moisanb@umich.edu</a>
-            <a href="resume.pdf" target="_blank" class="flex items-center gap-1 text-blue-400 underline"><span>📄</span>Download CV</a>
-            <a href="https://github.com/b100dev" target="_blank" class="flex items-center gap-1 text-blue-400 underline"><span>🦁</span>GitHub</a>
-            <a href="https://linkedin.com/in/bmoisan" target="_blank" class="flex items-center gap-1 text-blue-400 underline"><span>🔗</span>LinkedIn</a>
-          </div>
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--pcb-green);
+      color: var(--silk);
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    /* ── APP SHELL ── */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    /* ── HEADER ── */
+    #topbar {
+      flex-shrink: 0;
+      height: var(--header-h);
+      background: rgba(8, 22, 12, 0.97);
+      border-bottom: 1px solid rgba(184, 115, 51, 0.35);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 0.8rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--copper-bright);
+      text-shadow: 0 0 18px rgba(232,148,58,0.5);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+      margin-right: 0.6rem;
+    }
+
+    .logo-icon {
+      width: 26px; height: 26px;
+      border: 2px solid var(--copper);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      background: rgba(200,121,65,0.12);
+    }
+
+    .sep {
+      width: 1px; height: 22px;
+      background: rgba(184,115,51,0.25);
+      flex-shrink: 0;
+      margin: 0 0.3rem;
+    }
+
+    /* Tool buttons */
+    .tbtn {
+      background: rgba(184,115,51,0.08);
+      border: 1px solid rgba(184,115,51,0.22);
+      color: rgba(240,232,208,0.65);
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.18s;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .tbtn:hover, .tbtn.active {
+      background: rgba(184,115,51,0.22);
+      border-color: var(--copper-bright);
+      color: var(--copper-bright);
+    }
+    .tbtn.danger  { border-color: rgba(255,80,80,0.3);  color: rgba(255,120,120,0.7); }
+    .tbtn.danger:hover {
+      background: rgba(255,80,80,0.13);
+      border-color: rgba(255,80,80,0.8);
+      color: #ff6060;
+    }
+    .tbtn.accent {
+      background: rgba(232,148,58,0.15);
+      border-color: rgba(232,148,58,0.5);
+      color: var(--copper-bright);
+    }
+    .tbtn.accent:hover {
+      background: rgba(232,148,58,0.28);
+      box-shadow: 0 0 14px rgba(232,148,58,0.35);
+    }
+
+    /* Sim status */
+    .sim-status {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(240,232,208,0.4);
+      white-space: nowrap;
+    }
+    .sim-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #444;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+    .sim-dot.active {
+      background: var(--led-green);
+      box-shadow: 0 0 8px var(--led-green);
+      animation: blink 1.4s infinite;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.4; }
+    }
+
+    /* ── MAIN WORKSPACE ── */
+    #workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 200px 1fr 210px;
+      overflow: hidden;
+    }
+
+    /* ── PALETTE ── */
+    #palette {
+      background: rgba(8,22,12,0.85);
+      border-right: 1px solid rgba(184,115,51,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--copper);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.6rem 0.8rem 0.4rem;
+      border-bottom: 1px solid rgba(184,115,51,0.15);
+      flex-shrink: 0;
+    }
+
+    .palette-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem;
+    }
+
+    .component-item {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.5rem 0.6rem;
+      margin-bottom: 0.3rem;
+      background: rgba(184,115,51,0.04);
+      border: 1px solid rgba(184,115,51,0.14);
+      border-radius: 5px;
+      cursor: grab;
+      transition: all 0.18s;
+      user-select: none;
+    }
+    .component-item:hover {
+      background: rgba(184,115,51,0.14);
+      border-color: rgba(184,115,51,0.5);
+      transform: translateX(2px);
+    }
+    .component-item:active { cursor: grabbing; }
+
+    .comp-icon { width: 32px; height: 32px; flex-shrink: 0; }
+    .comp-name { font-weight: 600; font-size: 0.82rem; color: var(--silk); }
+    .comp-desc { font-size: 0.67rem; color: rgba(240,232,208,0.45); margin-top: 0.05rem; }
+
+    /* ── CANVAS AREA ── */
+    #canvas-area {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #circuit-canvas {
+      flex: 1;
+      display: block;
+      width: 100%;
+      cursor: default;
+      touch-action: none;
+    }
+
+    /* Log strip at bottom of canvas area */
+    #circuit-log {
+      flex-shrink: 0;
+      height: 68px;
+      background: rgba(3,10,5,0.75);
+      border-top: 1px solid rgba(184,115,51,0.14);
+      padding: 0.4rem 0.7rem;
+      overflow-y: auto;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.67rem;
+      color: rgba(0,200,100,0.8);
+    }
+
+    .log-line { line-height: 1.55; opacity: 0; animation: fi 0.25s forwards; }
+    @keyframes fi { to { opacity: 1; } }
+    .log-warn    { color: #ffcc44; }
+    .log-success { color: var(--led-green); }
+    .log-error   { color: var(--led-red); }
+
+    /* ── PROPERTIES ── */
+    #properties {
+      background: rgba(8,22,12,0.85);
+      border-left: 1px solid rgba(184,115,51,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .props-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.6rem 0.7rem;
+    }
+
+    .prop-row { margin-bottom: 0.75rem; }
+    .prop-label {
+      font-size: 0.67rem;
+      color: rgba(240,232,208,0.45);
+      margin-bottom: 0.25rem;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+    .prop-value { font-size: 0.88rem; color: var(--silk); font-weight: 600; }
+
+    .prop-select, .prop-input {
+      width: 100%;
+      background: rgba(184,115,51,0.07);
+      border: 1px solid rgba(184,115,51,0.22);
+      border-radius: 4px;
+      color: var(--silk);
+      padding: 0.35rem 0.55rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      outline: none;
+      transition: border-color 0.18s;
+    }
+    .prop-select:focus, .prop-input:focus { border-color: var(--copper-bright); }
+    .prop-select option { background: #0d2b1a; }
+
+    .no-sel {
+      font-size: 0.78rem;
+      color: rgba(240,232,208,0.3);
+      font-style: italic;
+      text-align: center;
+      padding: 1.5rem 0.5rem;
+      line-height: 1.5;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.72);
+      z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: var(--pcb-mid);
+      border: 1px solid rgba(184,115,51,0.45);
+      border-radius: 10px;
+      padding: 1.8rem;
+      max-width: 420px; width: 92%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.75);
+    }
+    .modal h3 { font-family:'Orbitron',monospace; color:var(--copper-bright); margin-bottom:0.9rem; font-size:1rem; }
+    .modal p  { color:rgba(240,232,208,0.72); font-size:0.88rem; line-height:1.65; margin-bottom:1.4rem; }
+    .modal-close {
+      background:var(--copper); color:#1a0800; border:none;
+      padding:0.55rem 1.8rem; border-radius:4px;
+      font-family:'Rajdhani',sans-serif; font-weight:700; cursor:pointer; font-size:0.9rem;
+    }
+
+    /* ── SCROLLBARS ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); }
+    ::-webkit-scrollbar-thumb { background: rgba(184,115,51,0.35); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(184,115,51,0.65); }
+
+    /* ── RESPONSIVE: narrow screens ── */
+    @media (max-width: 780px) {
+      #workspace { grid-template-columns: 160px 1fr 0px; }
+      #properties { display: none; }
+    }
+    @media (max-width: 520px) {
+      #workspace { grid-template-columns: 0px 1fr 0px; }
+      #palette { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── TOP BAR ── -->
+  <div id="topbar">
+    <div class="logo">
+      <div class="logo-icon">&#x26A1;</div>
+      CircuitForge
+    </div>
+
+    <div class="sep"></div>
+
+    <button class="tbtn active" id="btn-select" onclick="setTool('select')">&#x2726; Select</button>
+    <button class="tbtn"        id="btn-wire"   onclick="setTool('wire')">&#x26A1; Wire</button>
+    <button class="tbtn"        id="btn-delete" onclick="setTool('delete')">&#x2715; Delete</button>
+
+    <div class="sep"></div>
+
+    <button class="tbtn" onclick="clearCanvas()">Clear</button>
+    <button class="tbtn accent" onclick="runSimulation()">&#x25B6; Simulate</button>
+    <button class="tbtn" onclick="loadExample()">Load Example</button>
+    <button class="tbtn" onclick="showGuide()">? Guide</button>
+
+    <div class="sim-status">
+      <div class="sim-dot" id="sim-dot"></div>
+      <span id="sim-label">IDLE</span>
+    </div>
+  </div>
+
+  <!-- ── WORKSPACE ── -->
+  <div id="workspace">
+
+    <!-- LEFT: Palette -->
+    <div id="palette">
+      <div class="panel-title">// Components</div>
+      <div class="palette-list">
+
+        <div class="component-item" draggable="true" data-type="battery">
+          <svg class="comp-icon" viewBox="0 0 36 36">
+            <rect x="4" y="12" width="22" height="12" rx="2" fill="none" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="26" y1="16" x2="32" y2="16" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="26" y1="20" x2="32" y2="20" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="10" y1="9"  x2="10" y2="27" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="14" y1="12" x2="14" y2="24" stroke="#c87941" stroke-width="2"/>
+          </svg>
+          <div><div class="comp-name">Battery</div><div class="comp-desc">9V power source</div></div>
         </div>
+
+        <div class="component-item" draggable="true" data-type="resistor">
+          <svg class="comp-icon" viewBox="0 0 36 36">
+            <line x1="2"  y1="18" x2="7"  y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <rect x="7" y="13" width="22" height="10" rx="1" fill="none" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="29" y1="18" x2="34" y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="11" y1="13" x2="11" y2="23" stroke="#e06030" stroke-width="1.5"/>
+            <line x1="15" y1="13" x2="15" y2="23" stroke="#ffd700" stroke-width="1.5"/>
+            <line x1="19" y1="13" x2="19" y2="23" stroke="#e06030" stroke-width="1.5"/>
+            <line x1="23" y1="13" x2="23" y2="23" stroke="#c0a000" stroke-width="1.5"/>
+          </svg>
+          <div><div class="comp-name">Resistor</div><div class="comp-desc">Limits current</div></div>
+        </div>
+
+        <div class="component-item" draggable="true" data-type="led_red">
+          <svg class="comp-icon" viewBox="0 0 36 36">
+            <polygon points="8,12 8,24 20,18" fill="rgba(255,50,50,0.3)" stroke="#ff3333" stroke-width="1.5"/>
+            <line x1="20" y1="12" x2="20" y2="24" stroke="#ff3333" stroke-width="1.5"/>
+            <line x1="2"  y1="18" x2="8"  y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="20" y1="18" x2="34" y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="22" y1="10" x2="26" y2="6"  stroke="#ff3333" stroke-width="1"/>
+            <line x1="25" y1="13" x2="29" y2="9"  stroke="#ff3333" stroke-width="1"/>
+          </svg>
+          <div><div class="comp-name">LED (Red)</div><div class="comp-desc">Emits red light</div></div>
+        </div>
+
+        <div class="component-item" draggable="true" data-type="led_green">
+          <svg class="comp-icon" viewBox="0 0 36 36">
+            <polygon points="8,12 8,24 20,18" fill="rgba(50,255,100,0.3)" stroke="#33ff66" stroke-width="1.5"/>
+            <line x1="20" y1="12" x2="20" y2="24" stroke="#33ff66" stroke-width="1.5"/>
+            <line x1="2"  y1="18" x2="8"  y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="20" y1="18" x2="34" y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="22" y1="10" x2="26" y2="6"  stroke="#33ff66" stroke-width="1"/>
+            <line x1="25" y1="13" x2="29" y2="9"  stroke="#33ff66" stroke-width="1"/>
+          </svg>
+          <div><div class="comp-name">LED (Green)</div><div class="comp-desc">Emits green light</div></div>
+        </div>
+
+        <div class="component-item" draggable="true" data-type="led_blue">
+          <svg class="comp-icon" viewBox="0 0 36 36">
+            <polygon points="8,12 8,24 20,18" fill="rgba(50,150,255,0.3)" stroke="#3399ff" stroke-width="1.5"/>
+            <line x1="20" y1="12" x2="20" y2="24" stroke="#3399ff" stroke-width="1.5"/>
+            <line x1="2"  y1="18" x2="8"  y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="20" y1="18" x2="34" y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="22" y1="10" x2="26" y2="6"  stroke="#3399ff" stroke-width="1"/>
+            <line x1="25" y1="13" x2="29" y2="9"  stroke="#3399ff" stroke-width="1"/>
+          </svg>
+          <div><div class="comp-name">LED (Blue)</div><div class="comp-desc">Emits blue light</div></div>
+        </div>
+
+        <div class="component-item" draggable="true" data-type="switch">
+          <svg class="comp-icon" viewBox="0 0 36 36">
+            <circle cx="8"  cy="18" r="3" fill="none" stroke="#c87941" stroke-width="1.5"/>
+            <circle cx="28" cy="18" r="3" fill="none" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="2"  y1="18" x2="5"  y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="31" y1="18" x2="34" y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="11" y1="18" x2="25" y2="12" stroke="#c87941" stroke-width="1.5"/>
+          </svg>
+          <div><div class="comp-name">Switch</div><div class="comp-desc">Click to toggle</div></div>
+        </div>
+
+        <div class="component-item" draggable="true" data-type="capacitor">
+          <svg class="comp-icon" viewBox="0 0 36 36">
+            <line x1="2"  y1="18" x2="14" y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="14" y1="10" x2="14" y2="26" stroke="#c87941" stroke-width="2"/>
+            <line x1="18" y1="10" x2="18" y2="26" stroke="#c87941" stroke-width="2"/>
+            <line x1="18" y1="18" x2="34" y2="18" stroke="#c87941" stroke-width="1.5"/>
+          </svg>
+          <div><div class="comp-name">Capacitor</div><div class="comp-desc">Stores charge</div></div>
+        </div>
+
+        <div class="component-item" draggable="true" data-type="buzzer">
+          <svg class="comp-icon" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="10" fill="none" stroke="#c87941" stroke-width="1.5"/>
+            <circle cx="18" cy="18" r="5"  fill="rgba(184,115,51,0.2)" stroke="#c87941" stroke-width="1"/>
+            <line x1="2"  y1="18" x2="8"  y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <line x1="28" y1="18" x2="34" y2="18" stroke="#c87941" stroke-width="1.5"/>
+            <text x="14" y="22" font-size="8" fill="#c87941">&#x266A;</text>
+          </svg>
+          <div><div class="comp-name">Buzzer</div><div class="comp-desc">Makes sound</div></div>
+        </div>
+
       </div>
-    </section>
+    </div>
 
-    <!-- About Me Section -->
-    <section id="about" class="max-w-4xl mx-auto px-4 py-10">
-      <h2 class="text-2xl font-bold mb-4">About Me 👋</h2>
-      <p class="text-gray-300 leading-relaxed">
-        I'm <strong>Benjamin Moisan</strong>, an <strong>Electrical Engineering student</strong> currently pursuing my B.S.E. at the <a href="https://ece.engin.umich.edu/" target="_blank" class="text-blue-400 underline">University of Michigan</a>.
-        I thrive at the intersection of firmware, hardware, Innovation and implementation.
-      </p>
-      <br />
-      <p class="text-gray-300 leading-relaxed">
-        My current interests include <strong>Telecommunications Systems</strong>, <strong>Nuclear power</strong>, and <strong>Nanotechnology</strong>. 
-      <br />
-  </section>
-    </script>
+    <!-- CENTER: Canvas + Log -->
+    <div id="canvas-area">
+      <canvas id="circuit-canvas"></canvas>
+      <div id="circuit-log">
+        <div class="log-line">// CircuitForge ready &mdash; drag components onto the board</div>
+        <div class="log-line">// Select WIRE tool, then click pin-to-pin to connect</div>
+        <div class="log-line">// Click SIMULATE to run &mdash; or Load Example to get started</div>
+      </div>
+    </div>
 
-  </body>
+    <!-- RIGHT: Properties -->
+    <div id="properties">
+      <div class="panel-title">// Properties</div>
+      <div class="props-body" id="props-content">
+        <div class="no-sel">Select a component<br/>to see its properties</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Guide Modal -->
+<div class="modal-overlay" id="guide-modal">
+  <div class="modal">
+    <h3>&#x1F6E0; How to Use</h3>
+    <p>
+      <strong style="color:var(--copper-bright)">1. Drag &amp; Drop</strong><br/>
+      Drag any component from the left panel onto the canvas.<br/><br/>
+      <strong style="color:var(--copper-bright)">2. Connect Wires</strong><br/>
+      Select the <em>Wire</em> tool, then click a pin (gold dot) and click another pin to connect them with a copper trace.<br/><br/>
+      <strong style="color:var(--copper-bright)">3. Move Components</strong><br/>
+      With the <em>Select</em> tool, drag components to reposition them.<br/><br/>
+      <strong style="color:var(--copper-bright)">4. Delete</strong><br/>
+      With the <em>Delete</em> tool, click a component or wire to remove it.<br/><br/>
+      <strong style="color:var(--copper-bright)">5. Toggle Switch</strong><br/>
+      With the Select tool, click a switch to open or close it.<br/><br/>
+      <strong style="color:var(--copper-bright)">6. Simulate</strong><br/>
+      Click <em>&#x25B6; Simulate</em> &mdash; LEDs and buzzers activate when a complete powered loop is detected.
+    </p>
+    <button class="modal-close" onclick="document.getElementById('guide-modal').classList.remove('show')">Got it!</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  CircuitForge Engine
+// ─────────────────────────────────────────────
+
+const canvas = document.getElementById('circuit-canvas');
+const ctx    = canvas.getContext('2d');
+const GRID   = 40;
+
+let components = [];
+let wires      = [];
+let selectedId = null;
+let currentTool = 'select';
+let wireStart   = null;
+let dragComp    = null;
+let dragOffset  = { x: 0, y: 0 };
+let mousePos    = { x: 0, y: 0 };
+let simRunning  = false;
+
+// ── Resize canvas to fill its container ──────
+function resizeCanvas() {
+  const area = document.getElementById('canvas-area');
+  const log  = document.getElementById('circuit-log');
+  canvas.width  = area.clientWidth;
+  canvas.height = area.clientHeight - log.offsetHeight;
+  render();
+}
+window.addEventListener('resize', resizeCanvas);
+
+// ── Component definitions ─────────────────────
+const DEFS = {
+  battery:   { label:'BAT', w:80, h:50, pins:[{x:-40,y:0,n:'+'},{x:40,y:0,n:'-'}], desc:'9V Battery' },
+  resistor:  { label:'R',   w:70, h:30, pins:[{x:-35,y:0,n:'1'},{x:35,y:0,n:'2'}], desc:'Resistor'   },
+  led_red:   { label:'D',   w:50, h:40, pins:[{x:-25,y:0,n:'A'},{x:25,y:0,n:'K'}], desc:'LED (Red)'  },
+  led_green: { label:'D',   w:50, h:40, pins:[{x:-25,y:0,n:'A'},{x:25,y:0,n:'K'}], desc:'LED (Green)'},
+  led_blue:  { label:'D',   w:50, h:40, pins:[{x:-25,y:0,n:'A'},{x:25,y:0,n:'K'}], desc:'LED (Blue)' },
+  switch:    { label:'SW',  w:70, h:40, pins:[{x:-35,y:0,n:'1'},{x:35,y:0,n:'2'}], desc:'Switch'     },
+  capacitor: { label:'C',   w:50, h:40, pins:[{x:-25,y:0,n:'+'},{x:25,y:0,n:'-'}], desc:'Capacitor'  },
+  buzzer:    { label:'BZ',  w:50, h:50, pins:[{x:-25,y:0,n:'+'},{x:25,y:0,n:'-'}], desc:'Buzzer'     },
+};
+
+let uid = 1;
+function mkComp(type, x, y) {
+  return { id: uid++, type, x: snap(x), y: snap(y), lit: false,
+           closed: type === 'switch' ? false : true,
+           label: DEFS[type].label + uid };
+}
+function snap(v) { return Math.round(v / GRID) * GRID; }
+
+function pins(comp) {
+  return DEFS[comp.type].pins.map(p => ({
+    x: comp.x + p.x, y: comp.y + p.y, name: p.n, compId: comp.id
+  }));
+}
+
+// ── Rendering ────────────────────────────────
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBoard();
+  wires.forEach(drawWire);
+  if (currentTool === 'wire' && wireStart) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(232,148,58,0.55)';
+    ctx.lineWidth   = 2.5;
+    ctx.setLineDash([6, 4]);
+    ctx.moveTo(wireStart.x, wireStart.y);
+    ctx.lineTo(mousePos.x, mousePos.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+  components.forEach(drawComp);
+}
+
+function drawBoard() {
+  // Board fill
+  ctx.fillStyle = '#0f3820';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(0,180,80,0.055)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= canvas.width; x += GRID) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+  }
+  for (let y = 0; y <= canvas.height; y += GRID) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+  }
+
+  // Grid dots
+  ctx.fillStyle = 'rgba(0,200,100,0.2)';
+  for (let x = 0; x <= canvas.width; x += GRID)
+    for (let y = 0; y <= canvas.height; y += GRID) {
+      ctx.beginPath(); ctx.arc(x, y, 1.4, 0, Math.PI*2); ctx.fill();
+    }
+
+  // Board edge + corner holes
+  ctx.strokeStyle = 'rgba(240,232,208,0.05)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(4, 4, canvas.width-8, canvas.height-8);
+
+  [[18,18],[canvas.width-18,18],[18,canvas.height-18],[canvas.width-18,canvas.height-18]]
+  .forEach(([cx,cy]) => {
+    ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2);
+    ctx.strokeStyle='rgba(184,115,51,0.22)'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy,1.8,0,Math.PI*2);
+    ctx.fillStyle='rgba(90,70,50,0.5)'; ctx.fill();
+  });
+}
+
+function drawWire(w) {
+  const active = simRunning && w.active;
+  const midX   = w.x1 + (w.x2 - w.x1) * 0.5;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(w.x1, w.y1);
+  ctx.lineTo(midX, w.y1);
+  ctx.lineTo(midX, w.y2);
+  ctx.lineTo(w.x2, w.y2);
+  ctx.lineJoin = 'round';
+
+  if (active) {
+    ctx.shadowBlur  = 14; ctx.shadowColor = '#c87941';
+    ctx.strokeStyle = '#e8943a'; ctx.lineWidth = 3;
+  } else {
+    ctx.strokeStyle = 'rgba(184,115,51,0.72)'; ctx.lineWidth = 2.5;
+  }
+  ctx.stroke();
+
+  // Solder joints
+  [[w.x1,w.y1],[w.x2,w.y2]].forEach(([x,y]) => {
+    ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fillStyle = active ? '#e8943a' : '#b07030';
+    ctx.shadowBlur = active ? 10 : 0; ctx.fill();
+    if (active) {
+      ctx.beginPath(); ctx.arc(x,y,7,0,Math.PI*2);
+      ctx.fillStyle='rgba(232,148,58,0.18)'; ctx.shadowBlur=0; ctx.fill();
+    }
+  });
+  ctx.restore();
+}
+
+function drawComp(comp) {
+  const def = DEFS[comp.type];
+  const lit = simRunning && comp.lit;
+  const sel = comp.id === selectedId;
+
+  ctx.save();
+  ctx.translate(comp.x, comp.y);
+
+  if (sel) {
+    ctx.shadowBlur=18; ctx.shadowColor='rgba(232,148,58,0.7)';
+    ctx.strokeStyle='rgba(232,148,58,0.55)'; ctx.lineWidth=1;
+    ctx.strokeRect(-def.w/2-8,-def.h/2-8,def.w+16,def.h+16);
+    ctx.shadowBlur=0;
+  }
+
+  drawBody(ctx, comp, def, lit);
+
+  // Pins
+  pins(comp).forEach(p => {
+    const lx=p.x-comp.x, ly=p.y-comp.y;
+    ctx.beginPath(); ctx.arc(lx,ly,5,0,Math.PI*2);
+    ctx.fillStyle='#c87941'; ctx.fill();
+    ctx.beginPath(); ctx.arc(lx,ly,2,0,Math.PI*2);
+    ctx.fillStyle='#091a0e'; ctx.fill();
+    ctx.fillStyle='rgba(240,232,208,0.45)';
+    ctx.font='6.5px Share Tech Mono'; ctx.textAlign='center';
+    ctx.fillText(p.name, lx, ly-9);
+  });
+
+  // Silkscreen ref
+  ctx.fillStyle='rgba(240,232,208,0.55)';
+  ctx.font='bold 7.5px Share Tech Mono';
+  ctx.textAlign='center';
+  ctx.fillText(comp.label||def.label, 0, -def.h/2-6);
+
+  ctx.restore();
+}
+
+function drawBody(ctx, comp, def, lit) {
+  const {w,h,type}={w:def.w,h:def.h,type:comp.type};
+
+  if (type==='battery') {
+    ctx.fillStyle='rgba(18,46,28,0.95)';
+    ctx.strokeStyle='#c87941'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.roundRect(-w/2,-h/2,w,h,4); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle='#c87941'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(-w/2-8,0); ctx.lineTo(-w/2,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w/2,0); ctx.lineTo(w/2+8,0); ctx.stroke();
+    for (let i=-1;i<=1;i+=0.5) {
+      ctx.strokeStyle=i===0?'rgba(232,148,58,0.85)':'rgba(184,115,51,0.45)';
+      ctx.lineWidth=i===0?2.5:1.5;
+      ctx.beginPath(); ctx.moveTo(i*14,-h/2+4); ctx.lineTo(i*14,h/2-4); ctx.stroke();
+    }
+    ctx.fillStyle='#e8943a'; ctx.font='bold 9px Orbitron';
+    ctx.textAlign='center'; ctx.fillText('9V',0,4);
+  }
+
+  else if (type==='resistor') {
+    ctx.fillStyle='rgba(18,46,28,0.95)';
+    ctx.strokeStyle='#c87941'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.roundRect(-w/2,-h/2,w,h,3); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle='#c87941'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(-w/2-8,0); ctx.lineTo(-w/2,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w/2,0); ctx.lineTo(w/2+8,0); ctx.stroke();
+    ['#e06030','#ffd700','#e06030','#c0a000'].forEach((c,i)=>{
+      ctx.fillStyle=c; ctx.fillRect(-14+i*9-2,-h/2+2,4,h-4);
+    });
+  }
+
+  else if (type.startsWith('led')) {
+    const lc={led_red:'#ff3333',led_green:'#33ff66',led_blue:'#3399ff'}[type];
+    ctx.strokeStyle='#c87941'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(-w/2-8,0); ctx.lineTo(-w/2+5,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w/2-5,0); ctx.lineTo(w/2+8,0); ctx.stroke();
+    if (lit) { ctx.shadowBlur=32; ctx.shadowColor=lc; }
+    ctx.fillStyle=lit?lc:lc+'44';
+    ctx.strokeStyle=lc; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(-w/2+5,-h/2+4); ctx.lineTo(-w/2+5,h/2-4); ctx.lineTo(w/2-5,0);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w/2-5,-h/2+4); ctx.lineTo(w/2-5,h/2-4);
+    ctx.lineWidth=2; ctx.stroke();
+    if (lit) {
+      ctx.strokeStyle=lc; ctx.lineWidth=1;
+      [[-8,-4,0,4,8]].flat().forEach(ry=>{
+        ctx.beginPath(); ctx.moveTo(w/2+2,ry); ctx.lineTo(w/2+10,ry*0.5||0.5); ctx.stroke();
+      });
+    }
+    ctx.shadowBlur=0;
+  }
+
+  else if (type==='switch') {
+    ctx.strokeStyle='#c87941'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(-w/2-8,0); ctx.lineTo(-w/2+5,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w/2-5,0); ctx.lineTo(w/2+8,0); ctx.stroke();
+    [[-w/2+5,0],[w/2-5,0]].forEach(([cx,cy])=>{
+      ctx.beginPath(); ctx.arc(cx,cy,4,0,Math.PI*2);
+      ctx.fillStyle='#c87941'; ctx.fill();
+    });
+    ctx.save(); ctx.translate(-w/2+5,0);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(w-10,comp.closed?0:-13);
+    ctx.strokeStyle=comp.closed?'#e8943a':'rgba(184,115,51,0.45)';
+    ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+    ctx.fillStyle=comp.closed?'#e8943a':'rgba(240,232,208,0.35)';
+    ctx.font='7.5px Share Tech Mono'; ctx.textAlign='center';
+    ctx.fillText(comp.closed?'ON':'OFF',0,-h/2+8);
+  }
+
+  else if (type==='capacitor') {
+    ctx.strokeStyle='#c87941'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(-w/2-8,0); ctx.lineTo(-4,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(4,0); ctx.lineTo(w/2+8,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-4,-h/2+4); ctx.lineTo(-4,h/2-4); ctx.lineWidth=2.5; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(4,-h/2+4);  ctx.lineTo(4,h/2-4);  ctx.stroke();
+    ctx.fillStyle='#e8943a'; ctx.font='9px Share Tech Mono';
+    ctx.textAlign='center'; ctx.fillText('+',-11,-h/2+4);
+  }
+
+  else if (type==='buzzer') {
+    if (lit) { ctx.shadowBlur=22; ctx.shadowColor='#ffcc44'; }
+    ctx.fillStyle=lit?'rgba(255,200,50,0.14)':'rgba(18,46,28,0.95)';
+    ctx.strokeStyle='#c87941'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(0,0,h/2-2,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0,h/4,0,Math.PI*2);
+    ctx.strokeStyle='rgba(184,115,51,0.45)'; ctx.stroke();
+    ctx.fillStyle=lit?'#ffcc44':'rgba(240,232,208,0.5)';
+    ctx.font=lit?'bold 14px serif':'12px serif';
+    ctx.textAlign='center'; ctx.fillText('\u266A',0,5);
+    ctx.strokeStyle='#c87941'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(-h/2-4,0); ctx.lineTo(-h/2+2,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(h/2-2,0);  ctx.lineTo(h/2+4,0);  ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+}
+
+// ── Hit testing ───────────────────────────────
+function compAt(mx,my) {
+  for (let i=components.length-1;i>=0;i--) {
+    const c=components[i],d=DEFS[c.type];
+    if (mx>=c.x-d.w/2-12 && mx<=c.x+d.w/2+12 && my>=c.y-d.h/2-12 && my<=c.y+d.h/2+12) return c;
+  }
+  return null;
+}
+
+function pinAt(mx,my,r=14) {
+  for (const comp of components)
+    for (const p of pins(comp))
+      if (Math.hypot(p.x-mx,p.y-my)<=r) return p;
+  return null;
+}
+
+function wireAt(mx,my) {
+  for (let i=wires.length-1;i>=0;i--) {
+    const w=wires[i], mx2=w.x1+(w.x2-w.x1)*0.5;
+    for (const [ax,ay,bx,by] of [[w.x1,w.y1,mx2,w.y1],[mx2,w.y1,mx2,w.y2],[mx2,w.y2,w.x2,w.y2]])
+      if (dSeg(mx,my,ax,ay,bx,by)<8) return w;
+  }
+  return null;
+}
+
+function dSeg(px,py,ax,ay,bx,by) {
+  const dx=bx-ax,dy=by-ay,l2=dx*dx+dy*dy;
+  if(!l2) return Math.hypot(px-ax,py-ay);
+  const t=Math.max(0,Math.min(1,((px-ax)*dx+(py-ay)*dy)/l2));
+  return Math.hypot(px-(ax+t*dx),py-(ay+t*dy));
+}
+
+// ── Tool management ───────────────────────────
+function setTool(t) {
+  currentTool=t; wireStart=null;
+  ['select','wire','delete'].forEach(n=>document.getElementById('btn-'+n)?.classList.toggle('active',n===t));
+  canvas.style.cursor=t==='wire'?'crosshair':t==='delete'?'not-allowed':'default';
+  render();
+}
+
+// ── Drag from palette ─────────────────────────
+canvas.addEventListener('dragover',e=>e.preventDefault());
+canvas.addEventListener('drop',e=>{
+  e.preventDefault();
+  const type=e.dataTransfer.getData('text/plain'); if(!type)return;
+  const r=canvas.getBoundingClientRect();
+  const comp=mkComp(type,e.clientX-r.left,e.clientY-r.top);
+  components.push(comp); log('Placed '+DEFS[type].desc);
+  select(comp.id); render();
+});
+
+document.querySelectorAll('.component-item').forEach(el=>{
+  el.addEventListener('dragstart',e=>{
+    e.dataTransfer.setData('text/plain',el.dataset.type);
+    e.dataTransfer.effectAllowed='copy';
+  });
+});
+
+// ── Canvas pointer events ─────────────────────
+let pDown=false, moved=false;
+
+canvas.addEventListener('pointerdown',e=>{
+  e.preventDefault(); pDown=true; moved=false;
+  const r=canvas.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+
+  if (currentTool==='select') {
+    const c=compAt(mx,my);
+    if(c){ dragComp=c; dragOffset={x:mx-c.x,y:my-c.y}; select(c.id); }
+    else { select(null); dragComp=null; }
+  }
+  else if (currentTool==='wire') {
+    const p=pinAt(mx,my);
+    wireStart=p?{compId:p.compId,pin:p.name,x:p.x,y:p.y}:{compId:null,pin:null,x:snap(mx),y:snap(my)};
+  }
+  else if (currentTool==='delete') {
+    const c=compAt(mx,my);
+    if(c){
+      wires=wires.filter(w=>w.fromComp!==c.id&&w.toComp!==c.id);
+      components=components.filter(x=>x.id!==c.id);
+      if(selectedId===c.id) select(null);
+      log('Deleted '+DEFS[c.type].desc);
+    } else {
+      const w=wireAt(mx,my);
+      if(w){wires=wires.filter(x=>x!==w);log('Deleted wire');}
+    }
+    resetSim(); render();
+  }
+});
+
+canvas.addEventListener('pointermove',e=>{
+  const r=canvas.getBoundingClientRect();
+  mousePos.x=e.clientX-r.left; mousePos.y=e.clientY-r.top;
+  if(pDown&&currentTool==='select'&&dragComp){
+    moved=true;
+    dragComp.x=snap(mousePos.x-dragOffset.x);
+    dragComp.y=snap(mousePos.y-dragOffset.y);
+    wires.forEach(w=>{
+      if(w.fromComp===dragComp.id){const p=pins(dragComp).find(p=>p.name===w.fromPin);if(p){w.x1=p.x;w.y1=p.y;}}
+      if(w.toComp  ===dragComp.id){const p=pins(dragComp).find(p=>p.name===w.toPin);  if(p){w.x2=p.x;w.y2=p.y;}}
+    });
+    resetSim();
+  }
+  render();
+});
+
+canvas.addEventListener('pointerup',e=>{
+  const r=canvas.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+
+  if(currentTool==='select'&&!moved&&dragComp&&dragComp.type==='switch'){
+    dragComp.closed=!dragComp.closed;
+    log('Switch '+dragComp.label+': '+(dragComp.closed?'CLOSED':'OPEN'), dragComp.closed?'success':'warn');
+    resetSim(); updateProps(dragComp);
+  }
+
+  if(currentTool==='wire'&&wireStart){
+    const p=pinAt(mx,my);
+    let ex=snap(mx),ey=snap(my),toComp=null,toPin=null;
+    if(p&&p.compId!==wireStart.compId){ex=p.x;ey=p.y;toComp=p.compId;toPin=p.name;}
+    if(Math.hypot(ex-wireStart.x,ey-wireStart.y)>5){
+      wires.push({x1:wireStart.x,y1:wireStart.y,x2:ex,y2:ey,
+        fromComp:wireStart.compId,fromPin:wireStart.pin,toComp,toPin,active:false});
+      log('Wire connected'); resetSim();
+    }
+    wireStart=null;
+  }
+  pDown=false; dragComp=null; render();
+});
+
+// ── Selection & Properties ────────────────────
+function select(id) {
+  selectedId=id;
+  updateProps(id?components.find(c=>c.id===id):null);
+  render();
+}
+
+function updateProps(comp) {
+  const el=document.getElementById('props-content');
+  if(!comp){el.innerHTML='<div class="no-sel">Select a component<br/>to see its properties</div>';return;}
+  const def=DEFS[comp.type];
+  el.innerHTML=`
+    <div class="prop-row"><div class="prop-label">COMPONENT</div><div class="prop-value">${def.desc}</div></div>
+    <div class="prop-row">
+      <div class="prop-label">REFERENCE</div>
+      <input class="prop-input" value="${comp.label}" onchange="renameComp(${comp.id},this.value)"/>
+    </div>
+    <div class="prop-row"><div class="prop-label">POSITION</div><div class="prop-value" style="font-family:'Share Tech Mono',monospace;font-size:0.78rem">${comp.x}, ${comp.y}</div></div>
+    ${comp.type==='switch'?`
+    <div class="prop-row">
+      <div class="prop-label">STATE</div>
+      <div class="prop-value" style="color:${comp.closed?'#33ff66':'rgba(240,232,208,0.45)'}">${comp.closed?'CLOSED':'OPEN'}</div>
+    </div>
+    <div class="prop-row"><button class="tbtn" onclick="toggleSW(${comp.id})" style="width:100%;text-align:center">Toggle Switch</button></div>`:''}
+    ${comp.type==='resistor'?`
+    <div class="prop-row">
+      <div class="prop-label">VALUE</div>
+      <select class="prop-select"><option>220 &#x3A9;</option><option>470 &#x3A9;</option><option>1 k&#x3A9;</option><option>10 k&#x3A9;</option></select>
+    </div>`:''}
+    <div class="prop-row" style="margin-top:0.8rem">
+      <button class="tbtn danger" onclick="deleteComp(${comp.id})" style="width:100%;text-align:center">Delete</button>
+    </div>`;
+}
+
+function renameComp(id,name){const c=components.find(c=>c.id===id);if(c){c.label=name;render();}}
+function toggleSW(id){
+  const c=components.find(c=>c.id===id);
+  if(c&&c.type==='switch'){c.closed=!c.closed;log('Switch '+c.label+': '+(c.closed?'CLOSED':'OPEN'));resetSim();updateProps(c);render();}
+}
+function deleteComp(id){
+  wires=wires.filter(w=>w.fromComp!==id&&w.toComp!==id);
+  components=components.filter(c=>c.id!==id);
+  select(null);resetSim();render();
+}
+
+// ── Simulation ────────────────────────────────
+function runSimulation(){
+  resetSim(); simRunning=true;
+  log('─── Simulating ───','warn');
+
+  const nid=(cid,pin)=>cid+':'+pin;
+  const g={};
+  components.forEach(c=>pins(c).forEach(p=>{g[nid(c.id,p.name)]=[];}));
+
+  wires.forEach(w=>{
+    if(w.fromComp&&w.toComp&&w.fromPin&&w.toPin){
+      const a=nid(w.fromComp,w.fromPin),b=nid(w.toComp,w.toPin);
+      if(g[a]!==undefined&&g[b]!==undefined){g[a].push(b);g[b].push(a);}
+    }
+  });
+
+  components.forEach(c=>{
+    if((c.type==='switch'&&c.closed)||['resistor','capacitor'].includes(c.type)){
+      const ps=pins(c),a=nid(c.id,ps[0].name),b=nid(c.id,ps[1].name);
+      if(!g[a].includes(b))g[a].push(b);
+      if(!g[b].includes(a))g[b].push(a);
+    }
+  });
+
+  const bats=components.filter(c=>c.type==='battery');
+  if(!bats.length){log('No battery found!','error');simRunning=false;return;}
+
+  bats.forEach(bat=>{
+    const pos=nid(bat.id,'+'),neg=nid(bat.id,'-');
+    const reach=bfs(g,pos);
+    if(!reach.has(neg)){log(bat.label+': open circuit — no complete loop','warn');return;}
+    log(bat.label+': circuit closed! Powering...','success');
+    wires.forEach(w=>{if(w.fromComp&&w.fromPin&&reach.has(nid(w.fromComp,w.fromPin)))w.active=true;});
+    components.forEach(c=>{
+      if(c.type.startsWith('led')||c.type==='buzzer'){
+        const ps=pins(c);
+        if(reach.has(nid(c.id,ps[0].name))&&reach.has(nid(c.id,ps[1].name))){c.lit=true;log(c.label+' is ON!','success');}
+      }
+    });
+  });
+
+  setSimStatus(true); render();
+}
+
+function bfs(g,s){
+  const v=new Set(),q=[s];
+  while(q.length){const n=q.shift();if(v.has(n))continue;v.add(n);(g[n]||[]).forEach(x=>q.push(x));}
+  return v;
+}
+
+function resetSim(){
+  simRunning=false;
+  components.forEach(c=>c.lit=false);
+  wires.forEach(w=>w.active=false);
+  setSimStatus(false);
+}
+
+function setSimStatus(on){
+  document.getElementById('sim-dot').classList.toggle('active',on);
+  const l=document.getElementById('sim-label');
+  l.textContent=on?'RUNNING':'IDLE';
+  l.style.color=on?'#33ff66':'rgba(240,232,208,0.4)';
+}
+
+// ── Log ───────────────────────────────────────
+function log(msg,type=''){
+  const el=document.getElementById('circuit-log');
+  const d=document.createElement('div');
+  d.className='log-line'+(type?' log-'+type:'');
+  d.textContent='> '+msg;
+  el.appendChild(d);
+  el.scrollTop=el.scrollHeight;
+}
+
+// ── Utilities ─────────────────────────────────
+function clearCanvas(){
+  if(!confirm('Clear the board?'))return;
+  components=[];wires=[];selectedId=null;resetSim();updateProps(null);log('Board cleared.');render();
+}
+
+function showGuide(){document.getElementById('guide-modal').classList.add('show');}
+
+function loadExample(){
+  components=[];wires=[];selectedId=null;
+  const cx=snap(canvas.width/2), cy=snap(canvas.height/2);
+  const bat=mkComp('battery',  cx-200, cy);
+  const sw =mkComp('switch',   cx-60,  cy); sw.closed=true;
+  const res=mkComp('resistor', cx+80,  cy);
+  const led=mkComp('led_red',  cx+220, cy);
+  components.push(bat,sw,res,led);
+
+  const [bp,sp,rp,lp]=[bat,sw,res,led].map(c=>pins(c));
+  wires.push(
+    {x1:bp[0].x,y1:bp[0].y,x2:sp[0].x,y2:sp[0].y,fromComp:bat.id,fromPin:'+',toComp:sw.id, toPin:'1',active:false},
+    {x1:sp[1].x,y1:sp[1].y,x2:rp[0].x,y2:rp[0].y,fromComp:sw.id, fromPin:'2',toComp:res.id,toPin:'1',active:false},
+    {x1:rp[1].x,y1:rp[1].y,x2:lp[0].x,y2:lp[0].y,fromComp:res.id,fromPin:'2',toComp:led.id,toPin:'A',active:false},
+    {x1:lp[1].x,y1:lp[1].y,x2:bp[1].x,y2:bp[1].y,fromComp:led.id,fromPin:'K',toComp:bat.id,toPin:'-',active:false}
+  );
+  log('Example loaded: Battery → Switch → Resistor → LED','success');
+  log('Click ▶ Simulate to run!','warn');
+  resetSim(); render();
+}
+
+// ── Init ──────────────────────────────────────
+resizeCanvas();
+</script>
+</body>
 </html>
