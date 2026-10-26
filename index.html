@@ -5,30 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="B100dev builds simple digital products, projects, and thoughtful writing."
+      content="B100dev builds simple tools, small websites, and thoughtful notes."
     />
-    <title>B100dev | Simple landing page</title>
+    <title>B100dev</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="page-shell">
-      <header class="site-header">
+      <header class="topbar">
         <div class="container nav-wrap">
-          <a href="#top" class="brand">
-            <span class="brand-mark">B</span>
-            <span>B100dev</span>
-          </a>
-
-          <nav class="site-nav" aria-label="Main navigation">
+          <a class="brand" href="#top">B100dev</a>
+          <nav class="nav" aria-label="Main navigation">
             <a href="#about">About</a>
             <a href="#projects">Projects</a>
-            <a href="#blog">Blog</a>
+            <a href="#writing">Writing</a>
             <a href="#contact">Contact</a>
           </nav>
         </div>
@@ -36,94 +29,74 @@
 
       <main id="top">
         <section class="hero section">
-          <div class="container hero-grid">
-            <div class="hero-copy">
-              <p class="eyebrow">Builder / Writer / Tinkerer</p>
-              <h1>Small projects. Clear ideas. Useful things.</h1>
-              <p class="lead">
-                I build simple experiences, document what I learn, and share the projects that
-                matter most.
-              </p>
-
-              <div class="hero-actions">
-                <a href="#projects" class="button primary">See projects</a>
-                <a href="#blog" class="button secondary">Read blog</a>
-              </div>
-            </div>
-
-            <div class="hero-panel">
-              <div class="mini-card">
-                <p class="mini-label">Current focus</p>
-                <h2>Portfolio + tools + notes</h2>
-                <ul>
-                  <li>Simple websites</li>
-                  <li>Useful utilities</li>
-                  <li>Writing and experiments</li>
-                </ul>
-              </div>
+          <div class="container hero-inner">
+            <p class="eyebrow">builder · writer · tinkerer</p>
+            <h1>Small things, built with intention.</h1>
+            <p class="lead">
+              I make simple digital products, tidy interfaces, and notes about how I build them.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#projects">Projects</a>
+              <a class="button secondary" href="#writing">Writing</a>
             </div>
           </div>
         </section>
 
-        <section id="about" class="section muted-section">
+        <section id="about" class="section">
           <div class="container narrow">
-            <p class="section-kicker">About</p>
-            <h2>I design and build things that feel straightforward and intentional.</h2>
-            <p class="section-copy">
-              I care about clarity, speed, and practical value. My work spans front-end builds,
-              small tools, and writing about the process behind them.
+            <p class="section-label">About</p>
+            <p class="section-text">
+              I like clear interfaces, useful tools, and work that feels calm rather than noisy.
+              My focus is on simple ideas that become useful experiences.
             </p>
           </div>
         </section>
 
         <section id="projects" class="section">
           <div class="container">
-            <p class="section-kicker">Projects</p>
-            <div class="projects-grid">
-              <article class="project-card">
-                <span class="project-tag">Website</span>
-                <h3>Personal portfolio</h3>
-                <p>A simple, modern portfolio for sharing work, writing, and contact details.</p>
-                <a href="https://github.com/B100dev/b100dev.github.io" target="_blank" rel="noreferrer">View repository →</a>
+            <p class="section-label">Projects</p>
+            <div class="card-grid">
+              <article class="card">
+                <span class="tag">Site</span>
+                <h2>Portfolio</h2>
+                <p>A simple personal home for work, notes, and links.</p>
+                <a href="https://github.com/B100dev/b100dev.github.io" target="_blank" rel="noreferrer">GitHub →</a>
               </article>
 
-              <article class="project-card">
-                <span class="project-tag">Tool</span>
-                <h3>Utility dashboard</h3>
-                <p>A lightweight interface for practical tasks, links, and notes in one place.</p>
-                <a href="https://b100dev.github.io/toolbox/#/" target="_blank" rel="noreferrer">Open toolbox →</a>
+              <article class="card">
+                <span class="tag">Tool</span>
+                <h2>Toolbox</h2>
+                <p>A lightweight set of practical utilities and experiments.</p>
+                <a href="https://b100dev.github.io/toolbox/#/" target="_blank" rel="noreferrer">Open →</a>
               </article>
 
-              <article class="project-card">
-                <span class="project-tag">Writing</span>
-                <h3>Experiment log</h3>
-                <p>A collection of ideas, experiments, and lessons learned while building.</p>
-                <a href="#blog">Read blog →</a>
+              <article class="card">
+                <span class="tag">Note</span>
+                <h2>Ideas</h2>
+                <p>Small experiments, design thoughts, and future project notes.</p>
+                <a href="#writing">Read →</a>
               </article>
             </div>
           </div>
         </section>
 
-        <section id="blog" class="section muted-section">
+        <section id="writing" class="section muted">
           <div class="container">
-            <p class="section-kicker">Blog</p>
-            <div class="blog-list">
-              <article class="blog-item">
-                <p class="meta">May 2026 · Notes</p>
+            <p class="section-label">Writing</p>
+            <div class="list">
+              <article class="entry">
+                <time datetime="2026-05">May 2026</time>
                 <h3><a href="blog/hello-world.md">Hello world, again</a></h3>
-                <p>A simple reflection on starting small, shipping often, and making things useful.</p>
               </article>
 
-              <article class="blog-item">
-                <p class="meta">April 2026 · Build log</p>
+              <article class="entry">
+                <time datetime="2026-04">April 2026</time>
                 <h3><a href="blog/project-notes.md">Project notes and design choices</a></h3>
-                <p>Thoughts on keeping interfaces calm, readable, and intentional without overbuilding.</p>
               </article>
 
-              <article class="blog-item">
-                <p class="meta">March 2026 · Ideas</p>
+              <article class="entry">
+                <time datetime="2026-03">March 2026</time>
                 <h3><a href="blog/future-ideas.md">Future ideas worth exploring</a></h3>
-                <p>Small product ideas, experiments, and features I want to build next.</p>
               </article>
             </div>
           </div>
@@ -132,8 +105,8 @@
         <section id="contact" class="section contact-section">
           <div class="container contact-box">
             <div>
-              <p class="section-kicker">Contact</p>
-              <h2>Let’s build something simple and useful.</h2>
+              <p class="section-label">Contact</p>
+              <h2>Say hello.</h2>
             </div>
             <div class="contact-links">
               <a href="mailto:hello@b100dev.dev">hello@b100dev.dev</a>
@@ -145,8 +118,8 @@
 
       <footer class="site-footer">
         <div class="container footer-wrap">
-          <p>© B100dev</p>
-          <p>Simple products. Thoughtful writing.</p>
+          <p>© 2026 B100dev</p>
+          <p>Minimal tools. Clear ideas.</p>
         </div>
       </footer>
     </div>
