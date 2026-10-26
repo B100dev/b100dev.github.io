@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="B100dev builds clean digital products, portfolios, and tools that help ideas become real experiences."
+      content="B100dev builds simple digital products, projects, and thoughtful writing."
     />
-    <title>B100dev | Portfolio</title>
+    <title>B100dev | Simple landing page</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -20,175 +20,110 @@
     <div class="page-shell">
       <header class="site-header">
         <div class="container nav-wrap">
-          <a href="#home" class="brand" aria-label="B100dev home">
-            <img src="logo.png" alt="B100dev logo" />
+          <a href="#top" class="brand">
+            <span class="brand-mark">B</span>
             <span>B100dev</span>
           </a>
 
-          <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-
           <nav class="site-nav" aria-label="Main navigation">
             <a href="#about">About</a>
-            <a href="#skills">Skills</a>
             <a href="#projects">Projects</a>
+            <a href="#blog">Blog</a>
             <a href="#contact">Contact</a>
-            <a href="https://github.com/B100dev" target="_blank" rel="noreferrer" class="nav-cta">GitHub</a>
           </nav>
         </div>
       </header>
 
-      <main>
-        <section id="home" class="hero">
+      <main id="top">
+        <section class="hero section">
           <div class="container hero-grid">
             <div class="hero-copy">
-              <p class="eyebrow">Developer • Builder • Problem solver</p>
-              <h1>Building useful digital experiences that feel simple.</h1>
+              <p class="eyebrow">Builder / Writer / Tinkerer</p>
+              <h1>Small projects. Clear ideas. Useful things.</h1>
               <p class="lead">
-                I design and build websites, tools, and interfaces with a focus on clarity,
-                performance, and user experience.
+                I build simple experiences, document what I learn, and share the projects that
+                matter most.
               </p>
 
               <div class="hero-actions">
-                <a href="#projects" class="button primary">View projects</a>
-                <a href="#contact" class="button secondary">Contact me</a>
+                <a href="#projects" class="button primary">See projects</a>
+                <a href="#blog" class="button secondary">Read blog</a>
               </div>
-
-              <ul class="hero-stats" aria-label="Key statistics">
-                <li><strong>3+</strong><span>Years learning & building</span></li>
-                <li><strong>10+</strong><span>Creative experiments</span></li>
-                <li><strong>100%</strong><span>Focused on useful UX</span></li>
-              </ul>
             </div>
 
-            <div class="hero-visual" aria-label="Portfolio preview card">
-              <div class="glass-card">
-                <div class="window-bar">
-                  <span class="dot red"></span>
-                  <span class="dot amber"></span>
-                  <span class="dot green"></span>
-                </div>
-
-                <div class="code-surface">
-                  <div class="code-line"><span class="token key">const</span> <span class="token var">portfolio</span> = {</div>
-                  <div class="code-line indent">focus: <span class="token str">"clean UI"</span>,</div>
-                  <div class="code-line indent">tools: [<span class="token str">"HTML"</span>, <span class="token str">"CSS"</span>, <span class="token str">"JS"</span>],</div>
-                  <div class="code-line indent">impact: <span class="token str">"practical & memorable"</span></div>
-                  <div class="code-line">};</div>
-                </div>
-              </div>
-
-              <div class="floating-pill">Available for freelance work</div>
-            </div>
-          </div>
-        </section>
-
-        <section id="about" class="section">
-          <div class="container narrow">
-            <div class="section-heading">
-              <p class="eyebrow">About</p>
-              <h2>Designing with intention and shipping with clarity.</h2>
-            </div>
-
-            <div class="about-grid">
-              <div>
-                <p>
-                  I’m B100dev, a developer passionate about building digital experiences that feel
-                  thoughtful, quick, and genuinely helpful. My work sits at the intersection of
-                  design, code, and real-world utility.
-                </p>
-                <p>
-                  Whether I’m building a landing page, a utility site, or a polished portfolio,
-                  I aim for interfaces that are accessible, responsive, and easy to trust.
-                </p>
-              </div>
-
-              <div class="about-panel">
+            <div class="hero-panel">
+              <div class="mini-card">
+                <p class="mini-label">Current focus</p>
+                <h2>Portfolio + tools + notes</h2>
                 <ul>
-                  <li>Responsive design</li>
-                  <li>Front-end development</li>
-                  <li>Tooling & workflow automation</li>
-                  <li>Accessible, clean interfaces</li>
+                  <li>Simple websites</li>
+                  <li>Useful utilities</li>
+                  <li>Writing and experiments</li>
                 </ul>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="skills" class="section muted">
-          <div class="container">
-            <div class="section-heading center">
-              <p class="eyebrow">Skills</p>
-              <h2>Core capabilities</h2>
-            </div>
-
-            <div class="skills-grid">
-              <article class="skill-card">
-                <div class="icon">01</div>
-                <h3>Web design</h3>
-                <p>Clear, modern layouts that communicate value quickly and elegantly.</p>
-              </article>
-
-              <article class="skill-card">
-                <div class="icon">02</div>
-                <h3>Front-end code</h3>
-                <p>Semantic, responsive HTML, CSS, and JavaScript that performs well.</p>
-              </article>
-
-              <article class="skill-card">
-                <div class="icon">03</div>
-                <h3>UX thinking</h3>
-                <p>Focused on usability, reading flow, and interactions that feel natural.</p>
-              </article>
-
-              <article class="skill-card">
-                <div class="icon">04</div>
-                <h3>Product ideas</h3>
-                <p>Turning rough ideas into lightweight, useful experiences people enjoy using.</p>
-              </article>
-            </div>
+        <section id="about" class="section muted-section">
+          <div class="container narrow">
+            <p class="section-kicker">About</p>
+            <h2>I design and build things that feel straightforward and intentional.</h2>
+            <p class="section-copy">
+              I care about clarity, speed, and practical value. My work spans front-end builds,
+              small tools, and writing about the process behind them.
+            </p>
           </div>
         </section>
 
         <section id="projects" class="section">
           <div class="container">
-            <div class="section-heading center">
-              <p class="eyebrow">Projects</p>
-              <h2>Recent work and ideas</h2>
-            </div>
-
+            <p class="section-kicker">Projects</p>
             <div class="projects-grid">
-              <article class="project-card featured">
-                <span class="project-tag">Portfolio site</span>
-                <h3>B100dev Portfolio</h3>
-                <p>
-                  A polished personal site for showcasing projects, skills, and contact details in a
-                  clean, memorable style.
-                </p>
-                <ul>
-                  <li>Responsive layout</li>
-                  <li>Modern visual style</li>
-                  <li>Simple, fast front-end</li>
-                </ul>
+              <article class="project-card">
+                <span class="project-tag">Website</span>
+                <h3>Personal portfolio</h3>
+                <p>A simple, modern portfolio for sharing work, writing, and contact details.</p>
+                <a href="https://github.com/B100dev/b100dev.github.io" target="_blank" rel="noreferrer">View repository →</a>
               </article>
 
               <article class="project-card">
-                <span class="project-tag">Tooling</span>
+                <span class="project-tag">Tool</span>
                 <h3>Utility dashboard</h3>
-                <p>
-                  A lightweight interface for organizing useful actions and information in one place.
-                </p>
+                <p>A lightweight interface for practical tasks, links, and notes in one place.</p>
+                <a href="https://b100dev.github.io/toolbox/#/" target="_blank" rel="noreferrer">Open toolbox →</a>
               </article>
 
               <article class="project-card">
-                <span class="project-tag">Landing page</span>
-                <h3>Product showcase</h3>
-                <p>
-                  A conversion-focused page with strong hierarchy, trust signals, and clean calls to action.
-                </p>
+                <span class="project-tag">Writing</span>
+                <h3>Experiment log</h3>
+                <p>A collection of ideas, experiments, and lessons learned while building.</p>
+                <a href="#blog">Read blog →</a>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="blog" class="section muted-section">
+          <div class="container">
+            <p class="section-kicker">Blog</p>
+            <div class="blog-list">
+              <article class="blog-item">
+                <p class="meta">May 2026 · Notes</p>
+                <h3><a href="blog/hello-world.md">Hello world, again</a></h3>
+                <p>A simple reflection on starting small, shipping often, and making things useful.</p>
+              </article>
+
+              <article class="blog-item">
+                <p class="meta">April 2026 · Build log</p>
+                <h3><a href="blog/project-notes.md">Project notes and design choices</a></h3>
+                <p>Thoughts on keeping interfaces calm, readable, and intentional without overbuilding.</p>
+              </article>
+
+              <article class="blog-item">
+                <p class="meta">March 2026 · Ideas</p>
+                <h3><a href="blog/future-ideas.md">Future ideas worth exploring</a></h3>
+                <p>Small product ideas, experiments, and features I want to build next.</p>
               </article>
             </div>
           </div>
@@ -197,14 +132,12 @@
         <section id="contact" class="section contact-section">
           <div class="container contact-box">
             <div>
-              <p class="eyebrow">Contact</p>
-              <h2>Let’s build something useful.</h2>
+              <p class="section-kicker">Contact</p>
+              <h2>Let’s build something simple and useful.</h2>
             </div>
-
             <div class="contact-links">
               <a href="mailto:hello@b100dev.dev">hello@b100dev.dev</a>
               <a href="https://github.com/B100dev" target="_blank" rel="noreferrer">GitHub</a>
-              <a href="https://b100dev.github.io/" target="_blank" rel="noreferrer">Website</a>
             </div>
           </div>
         </section>
@@ -212,12 +145,10 @@
 
       <footer class="site-footer">
         <div class="container footer-wrap">
-          <p>© <span id="year"></span> B100dev</p>
-          <p>Built with HTML, CSS, and JavaScript.</p>
+          <p>© B100dev</p>
+          <p>Simple products. Thoughtful writing.</p>
         </div>
       </footer>
     </div>
-
-    <script src="script.js"></script>
   </body>
 </html>
